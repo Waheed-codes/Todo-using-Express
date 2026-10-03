@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "name": "Irfan",
+    "email": "userWaheed@gmail.com",
+    "password": "Waheed@123",
+    "todos": [
+      {
+        "id": 1,
+        "task": "MongoDB",
+        "tasks": "MongoDB"
+      }
+    ]
+  }
+]

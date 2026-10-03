@@ -1,0 +1,24 @@
+{
+  "name": "todo-using-express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Waheed-codes/Todo-using-Express.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Waheed-codes/Todo-using-Express/issues"
+  },
+  "homepage": "https://github.com/Waheed-codes/Todo-using-Express#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
