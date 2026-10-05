@@ -1,15 +1,16 @@
 [
   {
-    "id": 1,
-    "name": "Irfan",
+    "id": "f879eccd-3347-4583-9a9e-672b48a0aed0",
+    "name": "Waquas",
+    "email": "userWaquas@gmail.com",
+    "hashedPassword": "$2b$10$spL5RsvXd8e.Bzr8qz//2eZJsIPLmB6oCz4MQOA9gVIa4E68V1tLW",
+    "todos": []
+  },
+  {
+    "id": "e944e111-9298-4c31-baec-88561ed2791e",
+    "name": "Waheed",
     "email": "userWaheed@gmail.com",
-    "password": "Waheed@123",
-    "todos": [
-      {
-        "id": 1,
-        "task": "MongoDB",
-        "tasks": "MongoDB"
-      }
-    ]
+    "hashedPassword": "$2b$10$eFWt31s3RnFxzFRTjiTtbe4gABqc.5hkFihnFhqoLmsLxyNG.97SG",
+    "todos": []
   }
 ]

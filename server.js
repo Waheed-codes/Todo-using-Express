@@ -1,8 +1,13 @@
 import express from "express"
 import { readContent, writeContent } from "./utils/file.js"
+import { v4 as uuid } from "uuid"
+import bcrypt from "bcrypt"
+import encrypt from "./utils/toekn.js"
+import authMiddleWare from "./middleware/auth.js"
 const app = express()
 const PORT = 3065
 app.use(express.json())
+
 //POST API to create a user
 app.post("/create-user", async (req, res) => {
     try {
@@ -19,10 +24,10 @@ app.post("/create-user", async (req, res) => {
             });
         }
         let newUser = {
-            id,
+            id: uuid(),
             name,
             email,
-            password,
+            hashedPassword: await bcrypt.hash(password, 10),
             todos: []
 
         }
@@ -34,8 +39,36 @@ app.post("/create-user", async (req, res) => {
         res.status(500).json({ Error: "Internal Server Error" });
     }
 })
+// POST API for user Login
+app.post("/login", async (req, res) => {
+    try {
+        let { email, password } = req.body;
+        let database = await readContent()
+        let existingUser = database.find((item) => item.email == email)
+        if (!existingUser) {
+            return res.status(404).json({ msg: "User doesn't Exists" })
+        }
+        let checkPassword = await bcrypt.compare(password, existingUser.hashedPassword)
 
+        if (!checkPassword) {
+            return res.status(400).json({ msg: "Invalid Credentials" })
+        }
+
+        let userId = { id: existingUser.id }
+        let token = await encrypt(existingUser)
+        res.status(200).json({ msg: "Ypu are Successfully logged in", token })
+
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ Error: "Internal Server Error" });
+    }
+})
+
+app.use(authMiddleWare)  // the next() we wrote in auth.js will be used here. This will restrict the user from accessing the rest of the information untill he is authorized.
 //GET APIS to get all users
+
+
 app.get("/users", async (req, res) => {
     try {
         let database = await readContent()
@@ -45,9 +78,12 @@ app.get("/users", async (req, res) => {
         res.status(500).json({ Error: "Internal Server Error" });
     }
 })
+
+
 // GET API to get single user
 app.get("users/:userId", async (req, res) => {
     try {
+
         let userId = req.params.userId
         let database = await readContent()
         let existingUser = database.find((item) => item.id == userId)
@@ -120,7 +156,7 @@ app.post("/create-todo/:id", async (req, res) => {
         let userID = req.params.id;
         let { id, task } = req.body;
         let newTodo = {
-            id,
+            id: uuid(),
             task
         }
         let database = await readContent();
@@ -224,8 +260,8 @@ app.patch("/update-todo/:id", async (req, res) => {
         let userId = req.params.id
         let todoId = req.body.id
         let database = await readContent()
-        let updatedTodo=req.body
-    
+        let updatedTodo = req.body
+
         let existingUser = database.find((item) => item.id == userId)
         if (!existingUser) {
             return res.status(404).json({ Error: "User not found" })
@@ -234,15 +270,51 @@ app.patch("/update-todo/:id", async (req, res) => {
         if (!existingTodo) {
             return res.status(404).json({ Error: "Todo doesnt Exists" })
         }
-        Object.assign(existingTodo,updatedTodo)
+        Object.assign(existingTodo, updatedTodo)
         await writeContent(database)
-        res.status(202).json({msg:"todo updated successfully"})
-        
+        res.status(202).json({ msg: "todo updated successfully" })
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ Error: "Internal Server Error" })
     }
 
+})
+
+
+// Patch API to update password
+app.patch("/update-password/:id", async (req,res)=>{
+
+    try {
+    let userId= req.params.id
+    let database= await readContent()
+    let {oldPassword,newPassword}= req.body
+
+    let existingUser= database.find((item)=> item.id==userId)
+
+    if(!existingUser){
+        return res.status(404).json({Error:"User doesn't exists"})
+    }
+
+    let checkPassword=await bcrypt.compare(oldPassword,existingUser.hashedPassword
+    )
+
+    if(!checkPassword){
+        return res.status(400).json({msg:"Invalid Old Password"})
+    }
+
+    let newHashedPassword= await bcrypt.hash(newPassword,10)
+
+    existingUser.hashedPassword=newHashedPassword
+
+    await writeContent(database)
+    res.status(200).json({msg:"Password Updated Successfully"})
+}
+
+    catch (error) {
+        console.error(error)
+        res.status(500).json({msg:"Internal Server Error"})
+    }
 })
 app.listen(PORT, () => {
     console.log(`Server is running at ${PORT}`);

@@ -19,6 +19,9 @@
   },
   "homepage": "https://github.com/Waheed-codes/Todo-using-Express#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "bcrypt": "^6.0.0",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "uuid": "^14.0.2"
   }
 }
