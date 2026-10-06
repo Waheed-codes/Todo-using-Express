@@ -56,7 +56,7 @@ app.post("/login", async (req, res) => {
 
         let userId = { id: existingUser.id }
         let token = await encrypt(existingUser)
-        res.status(200).json({ msg: "Ypu are Successfully logged in", token })
+        res.status(200).json({ msg: "You are Successfully logged in", token })
 
 
     } catch (error) {
@@ -68,7 +68,7 @@ app.post("/login", async (req, res) => {
 app.use(authMiddleWare)  // the next() we wrote in auth.js will be used here. This will restrict the user from accessing the rest of the information untill he is authorized.
 //GET APIS to get all users
 
-
+//GET API to get all users
 app.get("/users", async (req, res) => {
     try {
         let database = await readContent()
@@ -271,7 +271,9 @@ app.patch("/update-todo/:id", async (req, res) => {
             return res.status(404).json({ Error: "Todo doesnt Exists" })
         }
         Object.assign(existingTodo, updatedTodo)
+
         await writeContent(database)
+        
         res.status(202).json({ msg: "todo updated successfully" })
 
     } catch (error) {
@@ -296,8 +298,7 @@ app.patch("/update-password/:id", async (req,res)=>{
         return res.status(404).json({Error:"User doesn't exists"})
     }
 
-    let checkPassword=await bcrypt.compare(oldPassword,existingUser.hashedPassword
-    )
+    let checkPassword=await bcrypt.compare(oldPassword,existingUser.hashedPassword)
 
     if(!checkPassword){
         return res.status(400).json({msg:"Invalid Old Password"})
@@ -316,6 +317,8 @@ app.patch("/update-password/:id", async (req,res)=>{
         res.status(500).json({msg:"Internal Server Error"})
     }
 })
+
+
 app.listen(PORT, () => {
     console.log(`Server is running at ${PORT}`);
 })

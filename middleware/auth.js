@@ -6,7 +6,7 @@ const authMiddleWare = (req, res, next) => {
         const token = req.headers.authorization?.split(' ')[1]
 
         if (!token) {
-            res.status(401).json({ msg: "Invalid Token" });
+            return res.status(401).json({ msg: "Invalid Token" });
         }
 
         const decode = jwt.verify(token, "mySecretKey")
@@ -14,7 +14,7 @@ const authMiddleWare = (req, res, next) => {
         next()
     } catch (error) {
         console.error(error);
-        res.status(401).json({ msg: error })
+        res.status(401).json({ msg: "Token Expired" })
     }
 }
 export default authMiddleWare
